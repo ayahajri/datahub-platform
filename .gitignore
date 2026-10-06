@@ -1,0 +1,43 @@
+# ===== Secrets (never commit) =====
+**/src/main/resources/application.properties
+**/src/main/resources/application-prod.properties
+**/src/main/resources/application-*.properties
+!**/src/main/resources/application.example.properties
+.env
+.env.*
+*.pem
+*.key
+
+# ===== Java / Maven =====
+target/
+*.class
+*.jar
+*.war
+hs_err_pid*
+.mvn/wrapper/maven-wrapper.jar
+
+# ===== Python =====
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ===== IDEs =====
+.vscode/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.factorypath
+
+# ===== OS / logs / local data =====
+.DS_Store
+Thumbs.db
+*.log
+uploads/
+*.db
+*.sqlite
+*.sqlite3

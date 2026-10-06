@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - DataHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: #0a0a0f;
+            color: #ffffff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            pointer-events: none;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .orb1 {
+            width: 400px;
+            height: 400px;
+            background: #4f46e5;
+            top: -100px;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .orb2 {
+            width: 500px;
+            height: 500px;
+            background: #ec4899;
+            bottom: -150px;
+            right: -150px;
+            animation-duration: 30s;
+            animation-delay: -5s;
+            opacity: 0.5;
+        }
+
+        .orb3 {
+            width: 350px;
+            height: 350px;
+            background: #06b6d4;
+            top: 50%;
+            left: 50%;
+            animation-duration: 22s;
+            animation-delay: -10s;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                transform: translate(80px, 80px) scale(1.2);
+            }
+        }
+
+        /* Topbar */
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            background: rgba(10, 10, 15, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(79, 70, 229, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .topbar h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .topbar h2 i {
+            color: #ec4899;
+            font-size: 1.8rem;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #ec4899, #4f46e5);
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+            gap: 12px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(79, 70, 229, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 i {
+            color: #a78bfa;
+        }
+
+        .card h3 .count-badge {
+            background: rgba(79, 70, 229, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #a78bfa;
+        }
+
+        /* Buttons */
+        .card-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+            gap: 12px;
+        }
+
+        /* Lists */
+        .list-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .list-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .list-item:hover {
+            background: rgba(79, 70, 229, 0.05);
+            border-color: rgba(79, 70, 229, 0.3);
+            transform: translateX(5px);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .user-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #a78bfa;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-role {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .role-admin {
+            background: rgba(236, 72, 153, 0.2);
+            color: #ec4899;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .role-user {
+            background: rgba(79, 70, 229, 0.2);
+            color: #a78bfa;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .user-email {
+            font-size: 0.8rem;
+            color: #a1a1aa;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .data-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        .data-item:hover {
+            background: rgba(79, 70, 229, 0.05);
+            border-color: rgba(79, 70, 229, 0.3);
+            transform: translateX(5px);
+        }
+
+        .data-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .data-meta {
+            font-size: 0.75rem;
+            color: #52525b;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 0.5rem;
+        }
+
+        .data-meta i {
+            font-size: 0.7rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #52525b;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Loading spinner */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(79, 70, 229, 0.3);
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        .list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .list-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .list-container::-webkit-scrollbar-thumb {
+            background: rgba(79, 70, 229, 0.4);
+            border-radius: 10px;
+        }
+
+        .list-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(79, 70, 229, 0.6);
+        }
+
+        /* Message */
+        .message {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 1.5rem;
+            }
+
+            .topbar {
+                padding: 0.8rem 1.5rem;
+            }
+
+            .topbar h2 {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .card h3 {
+                font-size: 1.3rem;
+            }
+
+            .user-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .topbar h2 span {
+                display: none;
+            }
+
+            .logout-btn span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+    <div class="orb orb3"></div>
+
+    <!-- Topbar -->
+    <div class="topbar">
+        <h2>
+            <i class="fas fa-crown"></i>
+            <span>Admin Dashboard</span>
+            <span class="admin-badge">ADMIN</span>
+        </h2>
+        <button class="logout-btn" onclick="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Users Card -->
+        <div class="card">
+            <h3>
+                <i class="fas fa-users"></i>
+                All Users
+                <span class="count-badge" id="usersCount">0</span>
+            </h3>
+            <button class="card-btn" onclick="loadUsers()">
+                <i class="fas fa-sync-alt"></i>
+                Load Users
+            </button>
+            <div id="usersList" class="list-container">
+                <div class="empty-state">
+                    <i class="fas fa-user-friends"></i>
+                    <p>No users loaded yet</p>
+                    <p style="font-size: 0.8rem;">Click "Load Users" to see all registered users</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Card -->
+        <div class="card">
+            <h3>
+                <i class="fas fa-database"></i>
+                All Data
+                <span class="count-badge" id="dataCount">0</span>
+            </h3>
+            <button class="card-btn" onclick="loadAllData()">
+                <i class="fas fa-sync-alt"></i>
+                Load Data
+            </button>
+            <div id="allData" class="list-container">
+                <div class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No data loaded yet</p>
+                    <p style="font-size: 0.8rem;">Click "Load Data" to see all user data</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get token from localStorage
+        const token = localStorage.getItem("token");
+
+        // Check if user is authenticated
+        if (!token) {
+            window.location.href = "auth.html";
+        }
+
+        // Show loading spinner
+        function showLoading(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                </div>
+            `;
+        }
+
+        // Show empty state
+        function showEmptyState(containerId, message, icon) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas ${icon}"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Update count badge
+        function updateCountBadge(badgeId, count) {
+            const badge = document.getElementById(badgeId);
+            if (badge) {
+                badge.textContent = count;
+            }
+        }
+
+        // LOAD USERS
+        async function loadUsers() {
+            showLoading("usersList");
+            
+            try {
+                const response = await fetch("http://localhost:8081/api/admin/users", {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+                
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem("token");
+                    window.location.href = "auth.html";
+                    return;
+                }
+                
+                const users = await response.json();
+                
+                if (!users || users.length === 0) {
+                    showEmptyState("usersList", "No users found", "fa-user-friends");
+                    updateCountBadge("usersCount", 0);
+                    return;
+                }
+                
+                // Update count badge
+                updateCountBadge("usersCount", users.length);
+                
+                // Display users
+                const usersListDiv = document.getElementById("usersList");
+                usersListDiv.innerHTML = users.map(user => `
+                    <div class="list-item">
+                        <div class="user-header">
+                            <div class="user-name">
+                                <i class="fas fa-user-circle"></i>
+                                ${escapeHtml(user.username)}
+                            </div>
+                            <div class="user-role ${user.role === 'ADMIN' ? 'role-admin' : 'role-user'}">
+                                <i class="fas ${user.role === 'ADMIN' ? 'fa-crown' : 'fa-user'}"></i>
+                                ${user.role || 'USER'}
+                            </div>
+                        </div>
+                        <div class="user-email">
+                            <i class="fas fa-envelope"></i>
+                            ${escapeHtml(user.email)}
+                        </div>
+                    </div>
+                `).join("");
+                
+            } catch (error) {
+                console.error("Error loading users:", error);
+                showEmptyState("usersList", "Error loading users. Check your connection.", "fa-exclamation-triangle");
+            }
+        }
+
+        // LOAD ALL DATA
+        async function loadAllData() {
+            showLoading("allData");
+            
+            try {
+                const response = await fetch("http://localhost:8081/api/data/all", {
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    }
+                });
+                
+                if (response.status === 401 || response.status === 403) {
+                    localStorage.removeItem("token");
+                    window.location.href = "auth.html";
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                if (!data || data.length === 0) {
+                    showEmptyState("allData", "No data found", "fa-inbox");
+                    updateCountBadge("dataCount", 0);
+                    return;
+                }
+                
+                // Update count badge
+                updateCountBadge("dataCount", data.length);
+                
+                // Display data
+                const allDataDiv = document.getElementById("allData");
+                allDataDiv.innerHTML = data.map(item => `
+                    <div class="data-item">
+                        <div class="data-title">
+                            <i class="fas fa-tag"></i>
+                            ${escapeHtml(item.title)}
+                        </div>
+                        <div class="data-content" style="font-size:0.85rem; color:#a1a1aa; margin-top:0.5rem;">
+                            ${escapeHtml(item.content && item.content.length > 150 ? item.content.substring(0, 150) + '...' : item.content || 'No content')}
+                        </div>
+                        <div class="data-meta">
+                            <i class="fas fa-user"></i>
+                            Created by: ${escapeHtml(item.createdBy || 'Unknown')}
+                        </div>
+                    </div>
+                `).join("");
+                
+            } catch (error) {
+                console.error("Error loading data:", error);
+                showEmptyState("allData", "Error loading data. Check your connection.", "fa-exclamation-triangle");
+            }
+        }
+
+        // LOGOUT
+        function logout() {
+            localStorage.removeItem("token");
+            window.location.href = "auth.html";
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(str) {
+            if (!str) return "";
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
+        }
+    </script>
+</body>
+</html>

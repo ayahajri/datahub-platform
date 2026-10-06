@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "app.jwt.secret",
+      "type": "java.lang.String",
+      "description": "Secret key used to sign JWT tokens."
+    },
+    {
+      "name": "app.jwt.expiration-ms",
+      "type": "java.lang.Long",
+      "description": "JWT token expiration time in milliseconds."
+    },
+    {
+      "name": "app.cors.allowed-origins",
+      "type": "java.lang.String",
+      "description": "Comma-separated list of origins allowed to call the API."
+    }
+  ]
+}

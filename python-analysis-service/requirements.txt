@@ -1,0 +1,20 @@
+# DataHub analysis service (python-analysis-service/)
+# Install with:  pip install --only-binary :all: -r requirements.txt
+# (--only-binary is needed on Python 3.14: only recent versions ship wheels)
+
+# --- API ---
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9      # required for UploadFile / Form
+
+# --- Data & ML ---
+numpy>=2.0
+pandas>=2.3.3
+scikit-learn>=1.9.0
+scipy>=1.18.0
+openpyxl>=3.1                # read .xlsx files (pandas.read_excel)
+xlrd>=2.0.1                  # read legacy .xls files
+
+# --- PDF report (report.py) ---
+reportlab>=5.0.1
+pillow>=12.3.0

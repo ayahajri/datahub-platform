@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataHub | Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0a0a0f;
+            overflow: hidden;
+        }
+
+        /* Animated Circle Lines - DataHub colors */
+        .container {
+            position: relative;
+            width: 256px;
+            height: 256px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .container span {
+            position: absolute;
+            left: 0;
+            width: 32px;
+            height: 6px;
+            background: rgba(79, 70, 229, 0.3);
+            border-radius: 8px;
+            transform-origin: 128px;
+            transform: scale(2.2) rotate(calc(var(--i) * (360deg / 50)));
+            animation: animateBlink 3s linear infinite;
+            animation-delay: calc(var(--i) * (3s / 50));
+        }
+
+        @keyframes animateBlink {
+            0% {
+                background: #4f46e5;
+                box-shadow: 0 0 8px #4f46e5, 0 0 15px #7c3aed;
+            }
+            25% {
+                background: rgba(79, 70, 229, 0.2);
+                box-shadow: none;
+            }
+            100% {
+                background: rgba(79, 70, 229, 0.2);
+                box-shadow: none;
+            }
+        }
+
+        /* Login Box */
+        .login-box {
+            position: absolute;
+            width: 400px;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 32px;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            z-index: 10;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-box form {
+            width: 100%;
+            padding: 0 50px 30px 50px;
+        }
+
+        h2 {
+            font-size: 2em;
+            background: linear-gradient(135deg, #ffffff, #a78bfa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            margin: 30px 0 20px 0;
+        }
+
+        /* Input Box */
+        .input-box {
+            position: relative;
+            margin: 25px 0;
+        }
+
+        .input-box input {
+            width: 100%;
+            height: 50px;
+            background: transparent;
+            border: 2px solid rgba(79, 70, 229, 0.3);
+            outline: none;
+            border-radius: 40px;
+            font-size: 1em;
+            color: #fff;
+            padding: 0 20px;
+            transition: .5s ease;
+        }
+
+        .input-box input:focus,
+        .input-box input:valid {
+            border-color: #4f46e5;
+            box-shadow: 0 0 8px rgba(79, 70, 229, 0.4);
+        }
+
+        .input-box label {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            font-size: 1em;
+            color: #a1a1aa;
+            pointer-events: none;
+            transition: .5s ease;
+        }
+
+        .input-box input:focus ~ label,
+        .input-box input:valid ~ label {
+            top: 1px;
+            font-size: .8em;
+            background: #0a0a0f;
+            padding: 0 6px;
+            color: #a78bfa;
+        }
+
+        /* Forgot Password */
+        .forgot-pass {
+            margin: -15px 0 20px;
+            text-align: center;
+        }
+
+        .forgot-pass a {
+            font-size: .85em;
+            color: #a1a1aa;
+            text-decoration: none;
+            transition: .3s ease;
+        }
+
+        .forgot-pass a:hover {
+            color: #a78bfa;
+            text-decoration: underline;
+        }
+
+        /* Button */
+        .btn {
+            width: 100%;
+            height: 45px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            outline: none;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 1em;
+            color: white;
+            font-weight: 600;
+            transition: .3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(79, 70, 229, 0.4);
+            gap: 15px;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Signup Link */
+        .signup-link {
+            margin: 20px 0 10px;
+            text-align: center;
+        }
+
+        .signup-link a {
+            font-size: 1em;
+            color: #a78bfa;
+            text-decoration: none;
+            font-weight: 600;
+            transition: .3s ease;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+            text-shadow: 0 0 5px #a78bfa;
+        }
+
+        /* Register Box */
+        .register-box {
+            position: absolute;
+            width: 400px;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(15px);
+            border-radius: 32px;
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            z-index: 10;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
+        }
+
+        .register-box form {
+            width: 100%;
+            padding: 0 50px 30px 50px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Message Styles */
+        .message {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+
+        .message.success {
+            background: rgba(79, 70, 229, 0.1);
+            color: #a78bfa;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(8px);
+            border-radius: 32px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(79, 70, 229, 0.3);
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-top: 15px;
+            color: #a78bfa;
+            font-size: 0.9em;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-box, .register-box {
+                width: 320px;
+            }
+            .login-box form, .register-box form {
+                padding: 0 30px 20px 30px;
+            }
+            h2 {
+                font-size: 1.6em;
+                margin: 20px 0 15px 0;
+            }
+            .container {
+                transform: scale(0.8);
+            }
+        }
+
+        /* Position relative for boxes */
+        .login-box, .register-box {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animated Circle Lines -->
+    <div class="container">
+        <div class="circle-lines">
+            <span style="--i:0;"></span>
+            <span style="--i:1;"></span>
+            <span style="--i:2;"></span>
+            <span style="--i:3;"></span>
+            <span style="--i:4;"></span>
+            <span style="--i:5;"></span>
+            <span style="--i:6;"></span>
+            <span style="--i:7;"></span>
+            <span style="--i:8;"></span>
+            <span style="--i:9;"></span>
+            <span style="--i:10;"></span>
+            <span style="--i:11;"></span>
+            <span style="--i:12;"></span>
+            <span style="--i:13;"></span>
+            <span style="--i:14;"></span>
+            <span style="--i:15;"></span>
+            <span style="--i:16;"></span>
+            <span style="--i:17;"></span>
+            <span style="--i:18;"></span>
+            <span style="--i:19;"></span>
+            <span style="--i:20;"></span>
+            <span style="--i:21;"></span>
+            <span style="--i:22;"></span>
+            <span style="--i:23;"></span>
+            <span style="--i:24;"></span>
+            <span style="--i:25;"></span>
+            <span style="--i:26;"></span>
+            <span style="--i:27;"></span>
+            <span style="--i:28;"></span>
+            <span style="--i:29;"></span>
+            <span style="--i:30;"></span>
+            <span style="--i:31;"></span>
+            <span style="--i:32;"></span>
+            <span style="--i:33;"></span>
+            <span style="--i:34;"></span>
+            <span style="--i:35;"></span>
+            <span style="--i:36;"></span>
+            <span style="--i:37;"></span>
+            <span style="--i:38;"></span>
+            <span style="--i:39;"></span>
+            <span style="--i:40;"></span>
+            <span style="--i:41;"></span>
+            <span style="--i:42;"></span>
+            <span style="--i:43;"></span>
+            <span style="--i:44;"></span>
+            <span style="--i:45;"></span>
+            <span style="--i:46;"></span>
+            <span style="--i:47;"></span>
+            <span style="--i:48;"></span>
+            <span style="--i:49;"></span>
+        </div>
+    </div>
+
+    <!-- LOGIN BOX -->
+    <div class="login-box" id="loginBox">
+        <form id="loginForm">
+            <h2>Welcome Back 🔐</h2>
+            <div class="input-box">
+                <input type="email" id="loginEmail" required>
+                <label>Email</label>
+            </div>
+            <div class="input-box">
+                <input type="password" id="loginPassword" required>
+                <label>Password</label>
+            </div>
+            <div class="forgot-pass">
+                <a href="#">Forgot your password?</a>
+            </div>
+            <button type="button" class="btn" id="loginBtn" onclick="login()">Login <i class="fas fa-arrow-right"></i></button>
+            <div class="signup-link">
+                <a href="#" onclick="showRegister(); return false;">Create account →</a>
+            </div>
+            <p id="loginMsg" class="message"></p>
+        </form>
+    </div>
+
+    <!-- REGISTER BOX -->
+    <div class="register-box hidden" id="registerBox">
+        <form id="registerForm">
+            <h2>Create Account </h2>
+            <div class="input-box">
+                <input type="text" id="regUsername" required>
+                <label>Username</label>
+            </div>
+            <div class="input-box">
+                <input type="email" id="regEmail" required>
+                <label>Email</label>
+            </div>
+            <div class="input-box">
+                <input type="password" id="regPassword" required>
+                <label>Password</label>
+            </div>
+            <button type="button" class="btn" id="registerBtn" onclick="register()">Register <i class="fas fa-user-plus"></i></button>
+            <div class="signup-link">
+                <a href="#" onclick="showLogin(); return false;">← Back to Login</a>
+            </div>
+            <p id="regMsg" class="message"></p>
+        </form>
+    </div>
+
+    <script>
+        // Show/Hide functions
+        function showLogin() {
+            document.getElementById("loginBox").classList.remove("hidden");
+            document.getElementById("registerBox").classList.add("hidden");
+        }
+
+        function showRegister() {
+            document.getElementById("registerBox").classList.remove("hidden");
+            document.getElementById("loginBox").classList.add("hidden");
+        }
+
+        // Show loading spinner
+        function showLoading(boxId, buttonId, show) {
+            const box = document.getElementById(boxId);
+            const button = document.getElementById(buttonId);
+            
+            if (show) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Loading...';
+                
+                let overlay = box.querySelector('.loading-overlay');
+                if (!overlay) {
+                    overlay = document.createElement('div');
+                    overlay.className = 'loading-overlay';
+                    overlay.innerHTML = `
+                        <div class="spinner"></div>
+                        <div class="loading-text">Processing request...</div>
+                    `;
+                    box.style.position = 'relative';
+                    box.appendChild(overlay);
+                } else {
+                    overlay.style.display = 'flex';
+                }
+            } else {
+                button.disabled = false;
+                if (buttonId === 'loginBtn') {
+                    button.innerHTML = 'Login <i class="fas fa-arrow-right"></i>';
+                } else {
+                    button.innerHTML = 'Register <i class="fas fa-user-plus"></i>';
+                }
+                
+                const overlay = box.querySelector('.loading-overlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+            }
+        }
+
+        // Show message
+        function showMessage(elementId, message, isError = false) {
+            const msgElement = document.getElementById(elementId);
+            msgElement.innerHTML = message;
+            msgElement.className = isError ? 'message error' : 'message success';
+            
+            setTimeout(() => {
+                if (msgElement.innerHTML === message) {
+                    msgElement.innerHTML = '';
+                    msgElement.className = 'message';
+                }
+            }, 3000);
+        }
+
+        // LOGIN FUNCTION
+        async function login() {
+            const email = document.getElementById("loginEmail").value.trim();
+            const password = document.getElementById("loginPassword").value;
+
+            if (!email || !password) {
+                showMessage("loginMsg", "❌ Please fill in all fields", true);
+                return;
+            }
+
+            showLoading("loginBox", "loginBtn", true);
+
+            try {
+                const response = await fetch("http://localhost:8081/api/users/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json(); // 🔥 مهم
+
+                showLoading("loginBox", "loginBtn", false);
+
+                if (!response.ok) {
+                    showMessage("loginMsg", "❌ Invalid credentials", true);
+                    return;
+                }
+
+                // save token
+                localStorage.setItem("token", data.token);
+
+                showMessage("loginMsg", "✅ Login successful!", false);
+
+                // 🔥 ROLE ROUTING HERE
+                setTimeout(() => {
+                    if (data.role === "ADMIN") {
+                        window.location.href = "dashboard-admin.html";
+                    } else {
+                        window.location.href = "dashboard-user.html";
+                    }
+                }, 800);
+
+            } catch (error) {
+                showLoading("loginBox", "loginBtn", false);
+                showMessage("loginMsg", "❌ Network error", true);
+            }
+        }
+        // REGISTER FUNCTION
+        async function register() {
+            const username = document.getElementById("regUsername").value.trim();
+            const email = document.getElementById("regEmail").value.trim();
+            const password = document.getElementById("regPassword").value;
+            
+            if (!username || !email || !password) {
+                showMessage("regMsg", "❌ Please fill in all fields", true);
+                return;
+            }
+            
+            if (password.length < 6) {
+                showMessage("regMsg", "❌ Password must be at least 6 characters", true);
+                return;
+            }
+            
+            showLoading("registerBox", "registerBtn", true);
+            
+            try {
+                const response = await fetch("http://localhost:8081/api/users/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                const data = await response.json();
+                
+                showLoading("registerBox", "registerBtn", false);
+                
+                if (response.status === 200 || response.status === 201) {
+                    showMessage("regMsg", "✅ Registered successfully! Please login.", false);
+                    document.getElementById("regUsername").value = "";
+                    document.getElementById("regEmail").value = "";
+                    document.getElementById("regPassword").value = "";
+                    
+                    setTimeout(() => {
+                        showLogin();
+                        showMessage("loginMsg", "✅ Account created! Please login.", false);
+                    }, 1500);
+                } else {
+                    showMessage("regMsg", "❌ " + (data.message || "Registration failed. Email may already exist."), true);
+                }
+            } catch (error) {
+                showLoading("registerBox", "registerBtn", false);
+                showMessage("regMsg", "❌ Network error. Cannot connect to server.", true);
+                console.error("Register error:", error);
+            }
+        }
+    </script>
+</body>
+</html>

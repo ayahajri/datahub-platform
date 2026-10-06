@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataHub Pro - Data Science Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* Animated Background */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            pointer-events: none;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+
+        .orb1 {
+            width: 400px;
+            height: 400px;
+            background: #4f46e5;
+            top: -100px;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .orb2 {
+            width: 500px;
+            height: 500px;
+            background: #ec4899;
+            bottom: -150px;
+            right: -150px;
+            animation-duration: 30s;
+            animation-delay: -5s;
+            opacity: 0.5;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 80px) scale(1.2); }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(10, 10, 15, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(79, 70, 229, 0.2);
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            background: linear-gradient(135deg, #4f46e5, #ec4899);
+            -webkit-background-clip: text;
+            color: #4f46e5;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .logout-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Tabs Navigation */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem 5%;
+            background: rgba(255, 255, 255, 0.02);
+            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(5px);
+            overflow-x: auto;
+            border-bottom: 1px solid rgba(79, 70, 229, 0.1);
+            max-width: 100%;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #a1a1aa;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn:hover {
+            background: rgba(79, 70, 229, 0.1);
+            color: #ffffff;
+        }
+
+        .tab-btn.active {
+            color: #a78bfa;
+            background: rgba(79, 70, 229, 0.2);
+            border-bottom: 2px solid #a78bfa;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem 5%;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(79, 70, 229, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card h2 i {
+            color: #a78bfa;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.9rem;
+            color: white;
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: rgba(79, 70, 229, 0.05);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* File Upload */
+        .file-input-wrapper {
+            position: relative;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            display: none;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 2.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.15), rgba(236, 72, 153, 0.1));
+            border: 2px dashed rgba(79, 70, 229, 0.4);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            border-color: #4f46e5;
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(236, 72, 153, 0.15));
+        }
+
+        .file-input-label i {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: #a78bfa;
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border: none;
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: rgba(79, 70, 229, 0.1);
+            color: #a78bfa;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(79, 70, 229, 0.2);
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Stats Cards */
+        .stat-card {
+            background: rgba(79, 70, 229, 0.1);
+            border: 1px solid rgba(79, 70, 229, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            color: #a1a1aa;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #a78bfa;
+        }
+
+        /* Tables */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: rgba(79, 70, 229, 0.1);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        tr:hover {
+            background: rgba(79, 70, 229, 0.05);
+        }
+
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 2rem;
+        }
+
+        /* Messages */
+        .message {
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .message.success {
+            background: rgba(79, 70, 229, 0.15);
+            color: #a78bfa;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .message.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #52525b;
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* Loading */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(79, 70, 229, 0.2);
+            border-top: 3px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(79, 70, 229, 0.2);
+            color: #a78bfa;
+        }
+
+        .badge-warning {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        .badge-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                overflow-x: auto;
+            }
+            .tab-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+            .container {
+                padding: 1rem 1.5%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <i class="fas fa-chart-bar"></i>
+            DataHub Pro
+        </div>
+        <div class="user-info">
+            <span id="userDisplay">Loading...</span>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('upload')">
+            <i class="fas fa-cloud-upload-alt"></i> Upload
+        </button>
+        <button class="tab-btn" onclick="switchTab('preview')">
+            <i class="fas fa-eye"></i> Preview
+        </button>
+        <button class="tab-btn" onclick="switchTab('quality')">
+            <i class="fas fa-chart-pie"></i> Quality Report
+        </button>
+        <button class="tab-btn" onclick="switchTab('analysis')">
+            <i class="fas fa-magic"></i> Analysis
+        </button>
+        <button class="tab-btn" onclick="switchTab('export')">
+            <i class="fas fa-download"></i> Export
+        </button>
+        <button class="tab-btn" onclick="switchTab('compare')">
+            <i class="fas fa-not-equal"></i> Compare
+        </button>
+        <button class="tab-btn" onclick="switchTab('history')">
+            <i class="fas fa-history"></i> History
+        </button>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- TAB 1: UPLOAD -->
+        <div id="upload" class="tab-content active">
+            <div class="card">
+                <h2><i class="fas fa-cloud-upload-alt"></i> Upload & Analyze Data</h2>
+                <div id="uploadMsg"></div>
+
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Select File (CSV, Excel, JSON)</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls,.json" required>
+                                <label for="fileInput" class="file-input-label">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <span>Click or drag file here</span>
+                                    <p id="fileName" style="color: #a78bfa; margin-top: 0.5rem;"></p>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="form-group">
+                            <label>Analysis Type</label>
+                            <select id="analysisType" required>
+                                <option value="">-- Select Type --</option>
+                                <option value="STATS">Statistics Only</option>
+                                <option value="ML">Machine Learning</option>
+                                <option value="BOTH">Complete Analysis</option>
+                            </select>
+                        </div>
+
+                        <button class="btn" onclick="uploadAndAnalyze()" style="width: 100%;">
+                            <i class="fas fa-play"></i> Start Analysis
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: PREVIEW -->
+        <div id="preview" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-eye"></i> Data Preview</h2>
+                <p style="color: #a1a1aa; margin-bottom: 1.5rem;">First 10 rows of your data with column information</p>
+                <div id="previewContent" class="empty-state">
+                    <i class="fas fa-file-csv"></i>
+                    <p>Upload a file first to see preview</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: QUALITY REPORT -->
+        <div id="quality" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-chart-pie"></i> Data Quality Report</h2>
+                <div id="qualityContent" class="empty-state">
+                    <i class="fas fa-bar-chart"></i>
+                    <p>Upload a file to generate quality report</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: ANALYSIS RESULTS -->
+        <div id="analysis" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-magic"></i> Analysis Results</h2>
+                <div id="analysisContent" class="empty-state">
+                    <i class="fas fa-chart-line"></i>
+                    <p>Run analysis to see results</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 5: EXPORT -->
+        <div id="export" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-download"></i> Export Results</h2>
+                <p style="color: #a1a1aa; margin-bottom: 1.5rem;">Download your analysis in PDF or CSV format</p>
+                <div id="exportContent" class="empty-state">
+                    <i class="fas fa-box"></i>
+                    <p>Run analysis first to export</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 6: COMPARE -->
+        <div id="compare" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-not-equal"></i> Compare Analyses</h2>
+                <p style="color: #a1a1aa; margin-bottom: 1.5rem;">Compare two analysis results side by side</p>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="compareId1">Select First Analysis</label>
+                        <select id="compareId1" aria-label="Select first analysis" required>
+                            <option value="">-- Select First --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="compareId2">Select Second Analysis</label>
+                        <select id="compareId2" aria-label="Select second analysis" required>
+                            <option value="">-- Select Second --</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn" onclick="compareAnalyses()" style="margin-bottom: 2rem;">
+                    <i class="fas fa-equals"></i> Compare
+                </button>
+                <div id="compareContent"></div>
+            </div>
+        </div>
+
+        <!-- TAB 7: HISTORY -->
+        <div id="history" class="tab-content">
+            <div class="card">
+                <h2><i class="fas fa-history"></i> Analysis History</h2>
+                
+                <div class="grid-2" style="margin-bottom: 1.5rem;">
+                    <input type="text" id="searchInput" placeholder="Search by filename..." 
+                           style="border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 0.9rem; background: rgba(255,255,255,0.05); color: white;">
+                    <select id="filterStatus" onchange="loadHistory()">
+                        <option value="">All Status</option>
+                        <option value="DONE">Done</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="FAILED">Failed</option>
+                    </select>
+                </div>
+
+                <div id="historyContent" class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>No analysis history yet</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+       <script src="dashboard-pro.js"></script>
+</body>
+</html>
